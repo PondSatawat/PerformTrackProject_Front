@@ -55,6 +55,14 @@ function AppContent() {
     return () => unsubscribe();
   }, []);
 
+  useEffect(() => {
+    // เมื่อมีการเปลี่ยนเมนู (activeTab เปลี่ยน) ให้ดึงข้อมูลใหม่จากฐานข้อมูล
+    if (user) {
+      refreshUserData(user);
+      fetchAllUsers();
+    }
+  }, [activeTab]);
+
   const fetchAllUsers = async () => {
     try {
       const res = await fetch('https://performtrackproject-back.onrender.com/api/users');

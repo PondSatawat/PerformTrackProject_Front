@@ -164,8 +164,16 @@ export default function AssignmentPage({
             {currentRole === 'STUDENT' && selectedTask && (
               <div className="border-t border-slate-200 pt-6 mt-2">
                 <h4 className="text-base font-bold text-slate-800 mb-4">ส่งงาน</h4>
-                <StudentSubmitCard task={selectedTask} userName={userName} userEmail={user.email} refresh={() => fetchAssignments(user, currentRole, profileData.academicYear, userName)} />
-              </div>
+                <StudentSubmitCard 
+                  task={selectedTask} 
+                  userName={userName} 
+                  userEmail={user.email} 
+                  refresh={() => {
+                    fetchAssignments(user, currentRole, profileData.academicYear, userName); 
+                    setSelectedTask(null); 
+                  }} 
+                />
+              </div>  
             )}
 
             {currentRole === 'TEACHER' && selectedAssignment && (
