@@ -89,7 +89,7 @@ export function TeacherGradeCard({ task, refresh }) {
             <p className="text-xs text-indigo-600 font-semibold">นักศึกษา: {task.studentName}</p>
           </div>
           <div className="flex items-center gap-2">
-            {isGraded && <span className="text-xs font-bold px-2 py-0.5 bg-green-100 text-green-700 rounded-full">ตรวจแล้ว ({task.score})</span>}
+            {isGraded && <span className="text-xs font-bold px-2 py-0.5 bg-green-100 text-green-700 rounded-full">ตรวจแล้ว ({task.score}/{task.maxScore || 100})</span>}
             <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${isLate ? 'bg-red-100 text-red-700' : 'bg-emerald-100 text-emerald-700'}`}>
               {isLate ? 'ส่งล่าช้า' : 'ตรงเวลา'}
             </span>
