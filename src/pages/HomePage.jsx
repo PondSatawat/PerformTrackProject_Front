@@ -128,12 +128,12 @@ export default function HomePage({
       const matchMajor = task.targetMajor === 'ALL' || (u.major || 'เทคโนโลยีสารสนเทศ (IT)') === task.targetMajor;
       return matchYear && matchMajor;
     });
-    
+
     // จำนวนคนที่ส่งแล้ว
     const submittedCount = assignments.filter(a => a.taskTitle === task.taskTitle && a.studentId !== 'ALL_CLASS' && a.submissionStatus !== 'ASSIGNED').length;
     const targetCount = targetStudents.length;
     const rate = targetCount > 0 ? Math.round((submittedCount / targetCount) * 100) : 0;
-    
+
     return { title: task.taskTitle, submitted: submittedCount, target: targetCount, rate };
   });
 
@@ -143,7 +143,7 @@ export default function HomePage({
 
   teacherAssigned.forEach(task => {
     const isPastDue = task.dueDate && new Date(task.dueDate) < now;
-    
+
     // คนที่ส่งช้า
     const lateSubmitters = allStudentSubmissions.filter(s => s.taskTitle === task.taskTitle && (s.submissionStatus === 'LATE_SUBMITTED' || s.lateSubmission));
     lateSubmitters.forEach(s => {
@@ -232,7 +232,7 @@ export default function HomePage({
 
           {/* งานที่ใกล้กำหนดส่ง */}
           <div className="bg-white/90 border border-sky-100 rounded-3xl shadow-sm p-6">
-            <h3 className="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">📋 งานที่ใกล้กำหนดส่ง</h3>
+            <h3 className="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">งานที่ใกล้กำหนดส่ง</h3>
             <div className="space-y-3">
               {upcomingDeadlines.length > 0 ? upcomingDeadlines.map(t => (
                 <div key={t.id} className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-200">
@@ -263,7 +263,7 @@ export default function HomePage({
             <div className="flex flex-col items-center gap-3 mb-5">
               <div className="text-center">
                 <h3 className="text-xl font-bold text-slate-800">คะแนนเฉลี่ยรายชิ้นงาน</h3>
-                <p className="text-slate-500 text-sm mt-1">เปรียบเทียบคะแนนเฉลี่ยของ นศ. กับคะแนนเต็มเพื่อดูว่างานยากเกินไปไหม</p>
+                <p className="text-slate-500 text-sm mt-1">เปรียบเทียบคะแนนเฉลี่ยของ นศ. กับคะแนนเต็ม</p>
               </div>
               <select
                 className="border border-slate-300 rounded-xl px-6 py-2 text-sm bg-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none min-w-[200px]"

@@ -88,7 +88,7 @@ export default function ReportingPage({
       <div className="space-y-6">
         <div className="flex justify-between items-center mb-6">
           <div>
-            <h3 className="text-2xl font-bold text-slate-800">สรุปผลการเรียน (แยกตามรายวิชา)</h3>
+            <h3 className="text-2xl font-bold text-slate-800">สรุปผลการเรียน</h3>
             <p className="text-slate-500 mt-1">เลือกวิชาเพื่อดูรายละเอียดคะแนนและเกรดสะสม</p>
           </div>
         </div>
