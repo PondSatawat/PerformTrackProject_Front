@@ -14,10 +14,10 @@ export function StudentSubmitCard({ task, userName, userEmail, refresh }) {
   const isBeforeOpen = task.openDate && new Date() < new Date(task.openDate);
   const isLate = isPastDue(task.dueDate);
   const buttonLabel = isBeforeOpen ? 'ยังไม่เปิดรับงาน' : (isLate ? 'ส่งล่าช้า' : 'บันทึกและส่ง');
-  const buttonClass = isBeforeOpen 
-    ? 'w-full bg-slate-400 text-white py-2 rounded-lg font-bold shadow-sm cursor-not-allowed' 
+  const buttonClass = isBeforeOpen
+    ? 'w-full bg-slate-400 text-white py-2 rounded-lg font-bold shadow-sm cursor-not-allowed'
     : (isLate ? 'w-full bg-red-600 hover:bg-red-700 active:bg-red-800 text-white py-2 rounded-lg font-bold transition shadow-sm' : 'w-full bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white py-2 rounded-lg font-bold transition shadow-sm');
-  
+
   const handleSubmit = async () => {
     if (isBeforeOpen) {
       showToast('ยังไม่ถึงเวลาเปิดรับงาน', 'warning');
@@ -32,7 +32,7 @@ export function StudentSubmitCard({ task, userName, userEmail, refresh }) {
       submissionStatus: isLate ? 'LATE_SUBMITTED' : 'SUBMITTED',
       lateSubmission: isLate
     };
-    await fetch(`http://localhost:8080/api/assignments`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(submissionData) });
+    await fetch(`https://performtrackproject-back.onrender.com/api/assignments`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(submissionData) });
     showToast('ส่งรายการประเมินเรียบร้อย!', 'success'); refresh();
   };
 
@@ -56,7 +56,7 @@ export function StudentSubmitCard({ task, userName, userEmail, refresh }) {
       </div>
       <div className="mt-2 pt-2 border-t border-slate-100">
         <label className="text-[10px] font-bold text-slate-500 mb-1 block">แนบลิงก์ผลงาน / โน้ต:</label>
-        <textarea className="w-full border border-slate-200 rounded-lg p-2 outline-none focus:border-indigo-400 h-12 text-xs mb-2 bg-slate-50 resize-none" value={studentNote} onChange={(e)=>setStudentNote(e.target.value)} disabled={isBeforeOpen} placeholder="วางลิงก์หรือพิมพ์ข้อความ..." />
+        <textarea className="w-full border border-slate-200 rounded-lg p-2 outline-none focus:border-indigo-400 h-12 text-xs mb-2 bg-slate-50 resize-none" value={studentNote} onChange={(e) => setStudentNote(e.target.value)} disabled={isBeforeOpen} placeholder="วางลิงก์หรือพิมพ์ข้อความ..." />
         <button onClick={handleSubmit} className={`${buttonClass} text-sm py-1.5`} disabled={isBeforeOpen}>{buttonLabel}</button>
       </div>
     </div>
@@ -71,9 +71,9 @@ export function TeacherGradeCard({ task, refresh }) {
   const [isEditing, setIsEditing] = useState(task.submissionStatus !== 'GRADED');
   const isLate = task.submissionStatus === 'LATE_SUBMITTED' || task.lateSubmission === true;
   const isGraded = task.submissionStatus === 'GRADED';
-  
+
   const handleGrade = async () => {
-    await fetch(`http://localhost:8080/api/assignments/${task.id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ score: parseFloat(score), instructorNote: note, submissionStatus: 'GRADED' }) });
+    await fetch(`https://performtrackproject-back.onrender.com/api/assignments/${task.id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ score: parseFloat(score), instructorNote: note, submissionStatus: 'GRADED' }) });
     showToast('ประเมินผลเรียบร้อย', 'success');
     setIsEditing(false);
     refresh();
@@ -118,7 +118,7 @@ export function TeacherGradeCard({ task, refresh }) {
           <button onClick={() => setExpanded(false)} className="ml-2 text-slate-400 hover:text-slate-600 text-lg font-bold transition-colors">✕</button>
         </div>
       </div>
-      
+
       {task.studentNote && (
         <div className="bg-slate-50 border border-slate-100 p-2 rounded-lg mb-3 mt-2">
           <p className="text-[10px] font-bold text-slate-400 mb-0.5">แนบมา:</p>
@@ -129,11 +129,11 @@ export function TeacherGradeCard({ task, refresh }) {
       <div className="flex gap-3 items-end mt-3">
         <div className="w-1/3">
           <label className="text-[10px] font-bold text-slate-500 mb-1 block">คะแนน</label>
-          <input type="number" placeholder="เต็ม 100" className={`w-full border border-slate-200 rounded-lg px-2 py-1.5 outline-none focus:border-indigo-400 font-bold text-indigo-700 text-sm ${!isEditing ? 'bg-slate-100 cursor-not-allowed' : ''}`} value={score} onChange={(e)=>setScore(e.target.value)} disabled={!isEditing} />
+          <input type="number" placeholder="เต็ม 100" className={`w-full border border-slate-200 rounded-lg px-2 py-1.5 outline-none focus:border-indigo-400 font-bold text-indigo-700 text-sm ${!isEditing ? 'bg-slate-100 cursor-not-allowed' : ''}`} value={score} onChange={(e) => setScore(e.target.value)} disabled={!isEditing} />
         </div>
         <div className="w-2/3">
           <label className="text-[10px] font-bold text-slate-500 mb-1 block">คอมเมนต์</label>
-          <input type="text" placeholder="ข้อเสนอแนะ..." className={`w-full border border-slate-200 rounded-lg px-2 py-1.5 outline-none focus:border-indigo-400 text-sm ${!isEditing ? 'bg-slate-100 cursor-not-allowed' : ''}`} value={note} onChange={(e)=>setNote(e.target.value)} disabled={!isEditing} />
+          <input type="text" placeholder="ข้อเสนอแนะ..." className={`w-full border border-slate-200 rounded-lg px-2 py-1.5 outline-none focus:border-indigo-400 text-sm ${!isEditing ? 'bg-slate-100 cursor-not-allowed' : ''}`} value={note} onChange={(e) => setNote(e.target.value)} disabled={!isEditing} />
         </div>
       </div>
       {isEditing ? (

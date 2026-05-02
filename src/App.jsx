@@ -15,23 +15,23 @@ import { ToastProvider, useToast } from './component/Toast.jsx';
 function AppContent() {
   const { showToast, showConfirm } = useToast();
   const [user, setUser] = useState(null);
-  const [userName, setUserName] = useState(''); 
+  const [userName, setUserName] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [profileData, setProfileData] = useState({ firstName: '', lastName: '', academicYear: '', major: '', role: '' });
-  const [currentRole, setCurrentRole] = useState('STUDENT'); 
+  const [currentRole, setCurrentRole] = useState('STUDENT');
   const [assignments, setAssignments] = useState([]);
   const [allUsers, setAllUsers] = useState([]);
-  
+
   // States สำหรับอาจารย์
-  const [showCreateModal, setShowCreateModal] = useState(false); 
+  const [showCreateModal, setShowCreateModal] = useState(false);
   const [newTaskTitle, setNewTaskTitle] = useState('');
   const [newTaskDesc, setNewTaskDesc] = useState('');
   const [newTaskDueDate, setNewTaskDueDate] = useState('');
   const [newTaskOpenDate, setNewTaskOpenDate] = useState('');
   const [newTaskMaxScore, setNewTaskMaxScore] = useState('100'); // ค่าเริ่มต้น 100
-  const [targetClass, setTargetClass] = useState('ปี 1'); 
-  const [newTaskType, setNewTaskType] = useState('งานทั่วไป'); 
-  const [filterStudent, setFilterStudent] = useState('ALL'); 
+  const [targetClass, setTargetClass] = useState('ปี 1');
+  const [newTaskType, setNewTaskType] = useState('งานทั่วไป');
+  const [filterStudent, setFilterStudent] = useState('ALL');
   const [searchStudent, setSearchStudent] = useState('');
   const [targetMajor, setTargetMajor] = useState('ALL');
   const [selectedTask, setSelectedTask] = useState(null);
@@ -57,21 +57,21 @@ function AppContent() {
 
   const fetchAllUsers = async () => {
     try {
-      const res = await fetch('http://localhost:8080/api/users');
+      const res = await fetch('https://performtrackproject-back.onrender.com/api/users');
       if (res.ok) setAllUsers(await res.json());
     } catch (error) { console.error("Error fetching all users:", error); }
   };
 
   const refreshUserData = async (currentUser) => {
     try {
-      const res = await fetch(`http://localhost:8080/api/users/uid/${currentUser.uid}`);
+      const res = await fetch(`https://performtrackproject-back.onrender.com/api/users/uid/${currentUser.uid}`);
       if (res.ok) {
         const userData = await res.json();
         if (userData) {
           const fullName = `${userData.firstName} ${userData.lastName}`;
           setCurrentRole(userData.role);
           setUserName(fullName);
-          setProfileData(prev => ({...prev, ...userData}));
+          setProfileData(prev => ({ ...prev, ...userData }));
           fetchAssignments(currentUser, userData.role, userData.academicYear, fullName);
         }
       }
@@ -79,7 +79,7 @@ function AppContent() {
   };
 
   const fetchAssignments = (currentUser, role, userYear, currentUserName) => {
-    fetch('http://localhost:8080/api/assignments')
+    fetch('https://performtrackproject-back.onrender.com/api/assignments')
       .then(res => res.json())
       .then(data => {
         if (role === 'STUDENT') {
@@ -92,9 +92,9 @@ function AppContent() {
 
   const handleUpdateProfile = async (e) => {
     e.preventDefault();
-    const res = await fetch(`http://localhost:8080/api/users`, {
+    const res = await fetch(`https://performtrackproject-back.onrender.com/api/users`, {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ 
+      body: JSON.stringify({
         firebaseUid: user.uid, email: user.email, firstName: profileData.firstName, lastName: profileData.lastName,
         academicYear: profileData.academicYear, major: profileData.major, role: profileData.role
       })
@@ -110,7 +110,7 @@ function AppContent() {
       submissionStatus: 'ASSIGNED', openDate: newTaskOpenDate, dueDate: newTaskDueDate, taskType: newTaskType,
       subject: newTaskSubject || 'งานทั่วไป', maxScore: parseFloat(newTaskMaxScore) || 100
     };
-    const res = await fetch('http://localhost:8080/api/assignments', {
+    const res = await fetch('https://performtrackproject-back.onrender.com/api/assignments', {
       method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(newAssignment)
     });
     if (res.ok) {
@@ -122,7 +122,7 @@ function AppContent() {
 
   const handleDeleteAssignment = async (task) => {
     showConfirm(`คุณต้องการลบงาน "${task.taskTitle}" หรือไม่?`, async () => {
-      const res = await fetch(`http://localhost:8080/api/assignments/${task.id}`, { method: 'DELETE' });
+      const res = await fetch(`https://performtrackproject-back.onrender.com/api/assignments/${task.id}`, { method: 'DELETE' });
       if (res.ok) {
         showToast('ลบงานสำเร็จ!', 'success');
         setSelectedAssignment(null);
@@ -138,7 +138,7 @@ function AppContent() {
 
   const handleEditAssignment = async (e) => {
     e.preventDefault();
-    const res = await fetch(`http://localhost:8080/api/assignments/${editTask.id}`, {
+    const res = await fetch(`https://performtrackproject-back.onrender.com/api/assignments/${editTask.id}`, {
       method: 'PUT', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(editTask)
     });
@@ -168,7 +168,7 @@ function AppContent() {
   let teacherAssigned = [];
   let teacherPendingGrade = [];
   let teacherGraded = [];
-  let uniqueStudents = []; 
+  let uniqueStudents = [];
 
   if (currentRole === 'STUDENT') {
     const mySubmissions = assignments.filter(a => a.studentId === user.email);
@@ -180,7 +180,7 @@ function AppContent() {
     const allStudentSubmissions = assignments.filter(a => a.studentId !== 'ALL_CLASS' && a.submissionStatus !== 'ASSIGNED');
     teacherPendingGrade = allStudentSubmissions.filter(a => a.submissionStatus === 'SUBMITTED' || a.submissionStatus === 'LATE_SUBMITTED');
     teacherGraded = allStudentSubmissions.filter(a => a.submissionStatus === 'GRADED');
-    
+
     const studentSet = new Set(allStudentSubmissions.map(a => a.studentName));
     uniqueStudents = Array.from(studentSet).filter(Boolean);
   }
@@ -207,7 +207,7 @@ function AppContent() {
         targetClass={targetClass} setTargetClass={setTargetClass}
         targetMajor={targetMajor} setTargetMajor={setTargetMajor}
       />
-      
+
       <EditAssignmentModal
         show={showEditModal} onClose={() => { setShowEditModal(false); setEditTask(null); }}
         onSubmit={handleEditAssignment} editTask={editTask} setEditTask={setEditTask}
@@ -225,7 +225,7 @@ function AppContent() {
             scoreChartData={scoreChartData} setActiveTab={setActiveTab} calculateGrade={calculateGrade}
           />
         )}
-        
+
         {activeTab === 'Assignment' && (
           <AssignmentPage
             currentRole={currentRole} user={user} userName={userName} profileData={profileData}
@@ -243,7 +243,7 @@ function AppContent() {
             fetchAssignments={fetchAssignments}
           />
         )}
-        
+
         {activeTab === 'Reporting' && (
           <ReportingPage
             currentRole={currentRole} user={user}
@@ -254,7 +254,7 @@ function AppContent() {
             calculateGrade={calculateGrade}
           />
         )}
-        
+
         {activeTab === 'Settings' && (
           <SettingsPage
             profileData={profileData} setProfileData={setProfileData} onSubmit={handleUpdateProfile}

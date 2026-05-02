@@ -5,46 +5,46 @@ import { useToast } from '../component/Toast.jsx';
 
 export default function AuthPage() {
   const { showToast } = useToast();
-  const [view, setView] = useState('login'); 
+  const [view, setView] = useState('login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState(''); 
-  const [firstName, setFirstName] = useState(''); 
-  const [lastName, setLastName] = useState('');   
-  
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const [signupYear, setSignupYear] = useState('ปี 3');
   const [signupMajor, setSignupMajor] = useState('เทคโนโลยีสารสนเทศ (IT)');
 
-  const handleEmailLogin = async (e) => { 
-    e.preventDefault(); 
-    try { await signInWithEmailAndPassword(auth, email, password); } 
-    catch (err) { showToast(err.message, 'error'); } 
+  const handleEmailLogin = async (e) => {
+    e.preventDefault();
+    try { await signInWithEmailAndPassword(auth, email, password); }
+    catch (err) { showToast(err.message, 'error'); }
   };
-  
+
   const handleSignUp = async (e) => {
-    e.preventDefault(); 
+    e.preventDefault();
     if (password !== confirmPassword) { showToast('รหัสผ่านไม่ตรงกัน', 'error'); return; }
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       await updateProfile(userCredential.user, { displayName: `${firstName} ${lastName}` });
-      await fetch('http://localhost:8080/api/users', {
+      await fetch('https://performtrackproject-back.onrender.com/api/users', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          firebaseUid: userCredential.user.uid, email: email, firstName: firstName, lastName: lastName, 
-          role: "STUDENT", academicYear: signupYear, major: signupMajor 
+        body: JSON.stringify({
+          firebaseUid: userCredential.user.uid, email: email, firstName: firstName, lastName: lastName,
+          role: "STUDENT", academicYear: signupYear, major: signupMajor
         })
       });
       showToast('สมัครสมาชิกสำเร็จ!', 'success');
     } catch (err) { showToast(err.message, 'error'); }
   };
 
-  const handleResetPassword = async (e) => { 
-    e.preventDefault(); 
-    try { await sendPasswordResetEmail(auth, email); showToast('ส่งลิงก์แล้ว!', 'success'); setView('login'); } 
-    catch (err) { showToast(err.message, 'error'); } 
+  const handleResetPassword = async (e) => {
+    e.preventDefault();
+    try { await sendPasswordResetEmail(auth, email); showToast('ส่งลิงก์แล้ว!', 'success'); setView('login'); }
+    catch (err) { showToast(err.message, 'error'); }
   };
 
   const EyeIcon = () => (<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" /><path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>);
@@ -56,9 +56,9 @@ export default function AuthPage() {
         {view === 'login' && (
           <form onSubmit={handleEmailLogin}>
             <h2 className="text-3xl font-bold text-center mb-8">Login</h2>
-            <input type="email" placeholder="Username / Email" className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 mb-4 outline-none focus:bg-white/30 placeholder-white/60 transition" value={email} onChange={(e)=>setEmail(e.target.value)} required />
+            <input type="email" placeholder="Username / Email" className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 mb-4 outline-none focus:bg-white/30 placeholder-white/60 transition" value={email} onChange={(e) => setEmail(e.target.value)} required />
             <div className="relative mb-2 w-full">
-              <input type={showPassword ? "text" : "password"} placeholder="Password" className="w-full bg-white/10 border border-white/20 rounded-xl pl-4 pr-12 py-3 outline-none focus:bg-white/30 placeholder-white/60 transition" value={password} onChange={(e)=>setPassword(e.target.value)} required />
+              <input type={showPassword ? "text" : "password"} placeholder="Password" className="w-full bg-white/10 border border-white/20 rounded-xl pl-4 pr-12 py-3 outline-none focus:bg-white/30 placeholder-white/60 transition" value={password} onChange={(e) => setPassword(e.target.value)} required />
               <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-0 top-0 h-full px-4 flex items-center text-white/60 hover:text-white transition z-10">{showPassword ? <EyeSlashIcon /> : <EyeIcon />}</button>
             </div>
             <div className="flex justify-between items-center text-sm mb-6 mt-2 text-white/80">
@@ -76,11 +76,11 @@ export default function AuthPage() {
           <form onSubmit={handleSignUp}>
             <h2 className="text-3xl font-bold text-center mb-6">Sign Up</h2>
             <div className="grid grid-cols-2 gap-3 mb-4">
-              <input type="text" placeholder="First Name" className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 outline-none focus:bg-white/30 placeholder-white/60 transition" value={firstName} onChange={(e)=>setFirstName(e.target.value)} required />
-              <input type="text" placeholder="Last Name" className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 outline-none focus:bg-white/30 placeholder-white/60 transition" value={lastName} onChange={(e)=>setLastName(e.target.value)} required />
+              <input type="text" placeholder="First Name" className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 outline-none focus:bg-white/30 placeholder-white/60 transition" value={firstName} onChange={(e) => setFirstName(e.target.value)} required />
+              <input type="text" placeholder="Last Name" className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 outline-none focus:bg-white/30 placeholder-white/60 transition" value={lastName} onChange={(e) => setLastName(e.target.value)} required />
             </div>
-            <input type="email" placeholder="Email Address" className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 mb-4 outline-none focus:bg-white/30 placeholder-white/60 transition" value={email} onChange={(e)=>setEmail(e.target.value)} required />
-            
+            <input type="email" placeholder="Email Address" className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 mb-4 outline-none focus:bg-white/30 placeholder-white/60 transition" value={email} onChange={(e) => setEmail(e.target.value)} required />
+
             <div className="grid grid-cols-2 gap-3 mb-4">
               <select className="w-full bg-[#1e3a8a] border border-white/20 rounded-xl px-4 py-3 outline-none text-white focus:bg-[#172554] transition" value={signupYear} onChange={(e) => setSignupYear(e.target.value)}>
                 <option value="ปี 1">ชั้นปีที่ 1</option><option value="ปี 2">ชั้นปีที่ 2</option><option value="ปี 3">ชั้นปีที่ 3</option><option value="ปี 4">ชั้นปีที่ 4</option><option value="อาจารย์">อาจารย์</option>
@@ -91,11 +91,11 @@ export default function AuthPage() {
             </div>
 
             <div className="relative mb-4 w-full">
-              <input type={showPassword ? "text" : "password"} placeholder="Create Password" className="w-full bg-white/10 border border-white/20 rounded-xl pl-4 pr-12 py-3 outline-none focus:bg-white/30 placeholder-white/60 transition" value={password} onChange={(e)=>setPassword(e.target.value)} required />
+              <input type={showPassword ? "text" : "password"} placeholder="Create Password" className="w-full bg-white/10 border border-white/20 rounded-xl pl-4 pr-12 py-3 outline-none focus:bg-white/30 placeholder-white/60 transition" value={password} onChange={(e) => setPassword(e.target.value)} required />
               <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-0 top-0 h-full px-4 flex items-center text-white/60 hover:text-white transition z-10">{showPassword ? <EyeSlashIcon /> : <EyeIcon />}</button>
             </div>
             <div className="relative mb-6 w-full">
-              <input type={showConfirmPassword ? "text" : "password"} placeholder="Confirm Password" className="w-full bg-white/10 border border-white/20 rounded-xl pl-4 pr-12 py-3 outline-none focus:bg-white/30 placeholder-white/60 transition" value={confirmPassword} onChange={(e)=>setConfirmPassword(e.target.value)} required />
+              <input type={showConfirmPassword ? "text" : "password"} placeholder="Confirm Password" className="w-full bg-white/10 border border-white/20 rounded-xl pl-4 pr-12 py-3 outline-none focus:bg-white/30 placeholder-white/60 transition" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required />
               <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="absolute right-0 top-0 h-full px-4 flex items-center text-white/60 hover:text-white transition z-10">{showConfirmPassword ? <EyeSlashIcon /> : <EyeIcon />}</button>
             </div>
             <button type="submit" className="w-full bg-[#10b981] hover:bg-[#059669] py-3 rounded-xl font-bold transition shadow-lg mb-4 uppercase">Create Account</button>
@@ -106,7 +106,7 @@ export default function AuthPage() {
           <form onSubmit={handleResetPassword}>
             <h2 className="text-2xl font-bold text-center mb-4">Reset Password</h2>
             <p className="text-sm text-center text-white/70 mb-6">ระบุอีเมลเพื่อรับลิงก์รีเซ็ตรหัสผ่าน</p>
-            <input type="email" placeholder="Email Address" className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 mb-6 outline-none focus:bg-white/30 placeholder-white/60 transition" value={email} onChange={(e)=>setEmail(e.target.value)} required />
+            <input type="email" placeholder="Email Address" className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 mb-6 outline-none focus:bg-white/30 placeholder-white/60 transition" value={email} onChange={(e) => setEmail(e.target.value)} required />
             <button type="submit" className="w-full bg-[#f97316] hover:bg-[#ea580c] py-3 rounded-xl font-bold transition shadow-lg mb-4 uppercase">Send Reset Link</button>
             <button type="button" onClick={() => setView('login')} className="w-full text-sm text-white/80 hover:text-white transition text-center block">Back to Login</button>
           </form>
